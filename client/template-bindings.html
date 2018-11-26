@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Exemplo Knockout</title>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+        crossorigin="anonymous">
+
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-8 col-xs-offset-2">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4>Knockout Bindings</h4>
+                    </div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <!-- Caso não seja passado o data no template, ele vai considerar o model pai como data default. -->
+                            <div class="col-xs-12" data-bind="template: {name: 'header-template', data: $data} ">
+
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <ul class="list-group" data-bind="template: {name: 'item-list-template', foreach: list}">
+
+                                </ul>
+                            </div>
+                            <div class="col-xs-6">
+                                <div class="row">
+                                    <div class="col-xs-12">
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/html" id="header-template">
+        <h3 data-bind="text: title"></h3>
+        <p>
+            Assunto: <span data-bind="text: topic"></span>
+        </p>
+    </script>
+
+    <script type="text/html" id="item-list-template">
+        <h4 data-bind="text: title"></h4>
+        <p data-bind="text: content"></p>
+        <br>
+    </script>
+
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.2/knockout-min.js"></script>
+    <script>
+
+        function Item(title, content) {
+            return {
+                title: ko.observable(title),
+                content: ko.observable(content)
+            };
+        }
+
+        function MyViewModel() {
+            var self = this;
+
+            self.title = ko.observable('Título');
+            self.topic = ko.observable('Assunto do cabeçalho');
+
+            self.list = ko.observableArray([
+                new Item('Título item 1', 'Conteúdo item 1'),
+                new Item('Título item 2', 'Conteúdo item 2'),
+                new Item('Título item 3', 'Conteúdo item 3')
+            ]);
+        }
+
+        ko.applyBindings(new MyViewModel())
+    </script>
+
+</body>
+
+</html>
