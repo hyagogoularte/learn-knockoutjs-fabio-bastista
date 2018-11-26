@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Exemplo Knockout</title>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+        crossorigin="anonymous">
+
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12 col-xs-offset-2">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4>Knockout Bindings</h4>
+                    </div>
+                    <div class="panel-body">
+
+                        <div class="row">
+                            <div class="col-xs-12 form-group">
+                                <h3 data-bind="text: propA"></h3>
+
+                                <button class="btn btn-primary" data-bind="click: function() {viewParent($data)}">
+                                    View Context Root
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <ul class="list-group" data-bind="foreach: list">
+                                    <li class="list-group-item">
+                                        <div class="row">
+                                            <div class="col-xs-12">
+                                                <span data-bind="text: propA"></span>
+                                            </div>
+                                            <div class="col-xs-12">
+
+                                            </div>
+                                            <div class="col-xs-12">
+                                                <button class="btn btn-primary" data-bind="click: function() { $root.viewParent($element); }">
+                                                    View Context Child
+                                                </button>
+                                            </div>
+                                            <div class="col-xs-12" data-bind="attr: {id: $index()}, html: $element.id"></div>
+                                            <div class="col-xs-12"></div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col-xs-6">
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <h3>Context Child</h3>
+                                        <h3 data-bind="with: context2">
+                                            <span data-bind="text: propA"></span>
+                                            <button class="btn btn-primary" data-bind="click: function() { $root.viewParent($data)}">
+                                                View Context Child
+                                            </button>
+                                        </h3>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.2/knockout-min.js"></script>
+    <script>
+        function MyViewModel() {
+            var self = this;
+
+            self.propA = ko.observable('PropA do contexto principal');
+
+            self.viewParent = function (parent) {
+                console.log(parent);
+            }
+
+            self.context2 = ko.observable({
+                propA: ko.observable('PropA do contexto filho')
+            });
+
+            self.list = ko.observableArray([{
+                propA: 'PropA do elemento 1 filho, criado pelo foreach',
+            }, {
+                propA: 'PropA do elemento 2 filho, criado pelo foreach',
+            }, {
+                propA: 'PropA do elemento 3 filho, criado pelo foreach',
+            }]);
+
+        }
+
+        ko.applyBindings(new MyViewModel())
+    </script>
+
+</body>
+
+</html>

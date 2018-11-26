@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Exemplo Knockout</title>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+        crossorigin="anonymous">
+    <style>
+        .item-checked {
+			color: #ddd;
+			text-decoration: line-through;
+		}
+		.total {
+			padding:0 2px;
+		}
+	</style>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-8 col-xs-offset-2">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4>Knockout Bindings</h4>
+                    </div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-xs-12" data-bind="with: alert">
+                                <div class="alert" data-bind="css: type, visible: show">
+                                    <span data-bind="text: message"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <strong>Lista de itens</strong>
+                                <ul class="list-group" data-bind="foreach: list">
+                                    <li class="list-group-item" data-bind="css: {'item-checked': checked}">
+                                        <input type="checkbox" name="" id="" data-bind="checked: checked">
+                                        <span data-bind="text: description()"></span>
+                                    </li>
+                                </ul>
+                                <!-- 
+                                    <li class="list-group-item item-checked">
+                                        <input type="checkbox" name="" id="" data-bind="value: description">
+                                        Descrição do Item
+                                    </li>
+                                -->
+                                <div class="col-xs-12">
+                                    <div class="row">
+                                        <div class="col-xs-2 total">Total</div>
+                                        <div class="col-xs-2 total text-center">
+                                            <span data-bind="text: list().length"></span>
+                                        </div>
+                                        <div class="col-xs-4 total text-center">
+                                            <input type="checkbox" name="" id="" disabled>
+                                            <!-- </div>
+                                        <div class="col-xs-2 total"> -->
+                                            <span data-bind="text: uncheckedItems"></span>
+                                        </div>
+                                        <div class="col-xs-4 total text-center">
+                                            <input type="checkbox" name="" id="" checked disabled>
+                                            <!-- </div>
+                                        <div class="col-cs 2 total"> -->
+                                            <span data-bind="text: checkedItems"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-6">
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <label for="Descrição do Item"></label>
+                                    </div>
+                                </div>
+                                <div class="col-xs-12">
+                                    <input type="text" class="form-control input-sm" id="description-item">
+                                </div>
+                                <div class="col-xs-12">
+                                    <br>
+                                </div>
+                                <div class="col-xs-12">
+                                    <button class="btn btn-primary btn-block" data-bind="click: onClickAddItem">
+                                        <span>Incluir Item</span>
+                                    </button>
+                                </div>
+                                <div class="col-xs-12">
+                                    <select class="form-control" data-bind="options: list, optionsText: 'description'"></select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.2/knockout-min.js"></script>
+    <script>
+
+        function Item(description, checked = false) {
+            return {
+                description: ko.observable(description),
+                checked: ko.observable(checked)
+            };
+        }
+
+        function Alert(message, type, show = false) {
+            return {
+                message: ko.observable(message),
+                type: ko.observable(type),
+                show: ko.observable(show)
+            };
+        }
+
+        function MyViewModel() {
+            var self = this;
+
+            self.list = ko.observableArray([
+                new Item('Josy'),
+                new Item('Roberta'),
+                new Item('Bianca', true)
+            ]);
+
+            self.alert = ko.observable(new Alert('Formulário', 'alert-info', true));
+
+            self.onClickAddItem = function () {
+                var item = $('#description-item');
+
+                if (!item.val()) {
+                    self.alert(new Alert('Preencha a descrição do item', 'alert-warning', true))
+                    return;
+                }
+
+                self.list.push(new Item(item.val()));
+                self.alert(new Alert('Item incluído', 'alert-success', true))
+                item.val('');
+            }
+
+            self.checkedItems = ko.pureComputed(function () {
+                // var itemsChecked = [];
+                // $.each(self.list(), function (index, value) {
+                //     if (value.checked()) {
+                //         itemsChecked.push(value);
+                //     }
+                // });
+
+                // return itemsChecked;
+
+                return self.list().filter(function (item) {
+                    return item.checked()
+                }).length;
+            });
+
+            self.uncheckedItems = ko.computed(function () {
+                // var itemsUnchecked = [];
+                // $.each(self.list(), function (index, value) {
+                //     if (!value.checked()) {
+                //         itemsUnchecked.push(value);
+                //     }
+                // });
+
+                // return itemsUnchecked;
+                return self.list().filter(function (item) {
+                    return !item.checked()
+                }).length;
+            });
+        }
+
+        ko.applyBindings(new MyViewModel())
+    </script>
+
+</body>
+
+</html>
