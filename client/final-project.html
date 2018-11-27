@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Exemplo Knockout</title>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+        crossorigin="anonymous">
+
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-8 col-xs-offset-2">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4>Final Project</h4>
+                    </div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <!-- Caso não seja passado o data no template, ele vai considerar o model pai como data default. -->
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label for="title">Título</label>
+                                    <input id="title" type="text" data-bind="value: item().title" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label for="content">Conteúdo</label>
+                                    <input id="content" type="text" data-bind="value: item().content" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12 d-flex">
+                                <button class="btn btn-primary mr-1" data-bind="click: onClickSaveItem">Criar</button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <ul class="list-group" data-bind="template: {name: 'item-list-template', foreach: list}"></ul>
+                            </div>
+                            <div class="col-xs-6">
+                                <div class="row">
+                                    <div class="col-xs-12">
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- <script type="text/html" id="header-template">
+        <h3 data-bind="text: title"></h3>
+        <p>
+            Assunto: <span data-bind="text: topic"></span>
+        </p>
+    </script> -->
+
+    <script type="text/html" id="item-list-template">
+        <h4 data-bind="text: title"></h4>
+        <p data-bind="text: content"></p>
+        <br>
+    </script>
+
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.2/knockout-min.js"></script>
+    <script>
+        // function getGoals() {
+        //     $.get('http://localhost:3000/goals', function (data) {
+        //         var dataFormatted = [];
+        //         $.each(data, function (index, value) {
+        //             console.log(value)
+        //             dataFormatted.push(new Goal(value._id, value.name, value.type, value.deadline));
+        //         });
+
+        //         viewModel.goals(dataFormatted);
+        //     })
+        // }
+
+        // function saveGoal(data, success, error) {
+        //     $.ajax({
+        //         url: 'http://localhost:3000/goals/',
+        //         type: 'POST',
+        //         data: JSON.stringify(data),
+        //         contentType: 'application/json',
+        //         success: success,
+        //         error: error || errorCallback
+        //     })
+        // }
+
+        // function updateGoal(id, data, success, error) {
+        //     var url = 'http://localhost:3000/goals/' + id;
+
+        //     $.ajax({
+        //         url: url,
+        //         type: 'PUT',
+        //         data: JSON.stringify(data),
+        //         contentType: 'application/json',
+        //         success: success,
+        //         error: error || errorCallback
+        //     })
+        // }
+
+        // function deleteGoal(id, success, error) {
+        //     var url = 'http://localhost:3000/goals/' + id;
+        //     $.ajax({
+        //         url: url,
+        //         type: 'DELETE',
+        //         async: true,
+        //         timeout: 300000,
+        //         success: success,
+        //         error: error || errorCallback
+        //     })
+        // }
+
+        var DEFAULT_URL = 'http://localhost:3000/';
+
+        function getList() {
+            var url = DEFAULT_URL + 'list';
+
+            $.get(url, function (response) {
+                var listFormatted = [];
+                $.each(response, function (index, value) {
+                    var itemFormatted = new ItemModel(value._id, value.title, value.content);
+                    listFormatted.push(itemFormatted);
+                });
+
+                myViewModel.list(listFormatted);
+            });
+        }
+
+        function postList(data, success, error = function () { }) {
+            var url = DEFAULT_URL + 'list';
+
+            $.post({
+                url: url,
+                data: JSON.stringify(data),
+                contentType: 'application/json',
+                success: success,
+                error: error
+            })
+        }
+
+        function ItemModel(id, title, content) {
+            return {
+                id: ko.observable(id),
+                title: ko.observable(title),
+                content: ko.observable(content)
+            };
+        }
+
+        function MyViewModel() {
+            var self = this;
+            self.item = ko.observable(new ItemModel());
+            self.list = ko.observableArray();
+            self.onClickSaveItem = function () {
+                var toBack = {
+                    title: self.item().title(),
+                    content: self.item().content()
+                };
+
+                postList(toBack, function (response) {
+                    self.item(new ItemModel());
+                    getList();
+                })
+            }
+        }
+
+        var myViewModel = new MyViewModel();
+        ko.applyBindings(myViewModel);
+
+
+        window.onload = function () {
+            getList();
+        }
+    </script>
+
+</body>
+
+</html>
